@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#58cc02">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sparky">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>Sparky Study</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="phone.css">
+</head>
+<body>
+<header id="top">
+  <div class="brand">⚡ Sparky Study</div>
+  <div id="streak" title="Daily streak"></div>
+</header>
+<div id="banner" hidden></div>
+<main id="view"></main>
+<nav id="tabs">
+  <button data-tab="learn" class="active"><span>🏠</span>Learn</button>
+  <button data-tab="practice"><span>💪</span>Practice</button>
+  <button data-tab="progress"><span>📊</span>Progress</button>
+  <button data-tab="settings"><span>⚙️</span>Settings</button>
+</nav>
+<div id="overlay" hidden></div>
+<script src="phone-config.js"></script>
+<script src="phone.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

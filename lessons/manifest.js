@@ -1,0 +1,33 @@
+// Lessons loaded by the app (v2 path, 12 Oct 2026). The path ORDER comes from units.js.
+// To add a lesson: put a new file in this folder and add its name here, then place it in units.js.
+window.LESSON_FILES = [
+  "a1-01.js",
+  "a1-02.js",
+  "a1-03.js",
+  "a1-04.js",
+  "a1-05.js",
+  "a2-01.js",
+  "a2-02.js",
+  "a2-03.js",
+  "a2-04.js",
+  "a2-05.js",
+  "a2-06.js",
+  "a3-01.js",
+  "a3-02.js",
+  "a3-03.js",
+  "a3-04.js",
+  "a3-05.js",
+  "a4-01.js",
+  "a4-02.js",
+  "a4-03.js",
+  "a4-04.js",
+  "a5-01.js",
+  "a5-02.js",
+  "a5-03.js",
+  "a5-04.js",
+  "a5-05.js",
+  "a6-01.js",
+  "a6-02.js",
+  "a6-03.js",
+  "a6-04.js"
+];
