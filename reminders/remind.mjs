@@ -29,6 +29,7 @@ for (const m of msgs.sort((a, b) => a.time - b.time)) {
   let x; try { x = JSON.parse(m.message); } catch (e) { continue; }
   const dev = String(x.dev || "unknown").slice(0, 40);
   if (x.t === "done" && /^\d{4}-\d\d-\d\d$/.test(x.day)) { if (!S.days.includes(x.day)) S.days.push(x.day); }
+  else if (x.t === "days" && Array.isArray(x.days)) { for (const d of x.days.slice(-60)) if (/^\d{4}-\d\d-\d\d$/.test(d) && !S.days.includes(d)) S.days.push(d); }
   else if (x.t === "sub") {
     const s = S.subs[dev] || {};
     if (x.sub && x.sub.endpoint) { s.sub = x.sub; s.welcome = true; }

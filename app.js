@@ -476,6 +476,29 @@ function reminderTick() {
     notify("Sparky Study", n ? `Do today's lesson to keep your ${n}-day streak!` : "Do today's lesson to start your streak.");
   }
 }
+/* ---------- one streak for PC and iPhone ---------- */
+// The PC tells the iPhone reminder service (phone/reminders) which days a lesson was done, and reads back the phone's days.
+const RELAY = "https://ntfy.sh/sparky-atnAadAj93UPoNdCk9OgzNoj";
+const SHARED = "https://raw.githubusercontent.com/yochrissenor-pixel/sparky-study/state/state.json";
+function shareDays() {
+  if (!D) return;
+  const days = Object.keys(S.days).filter(k => S.days[k] > 0).sort().slice(-60), last = days[days.length - 1];
+  if (!last || S.settings.shared === last) return;
+  fetch(RELAY, { method: "POST", body: JSON.stringify({ t: "days", dev: "pc", days, at: new Date().toISOString() }) })
+    .then(r => { if (r.ok) { S.settings.shared = last; save(); } }).catch(() => { /* offline: tries again next time */ });
+}
+async function phoneDays() {
+  if (!D) return;
+  let st; try { const r = await fetch(SHARED + "?t=" + Date.now(), { cache: "no-store" }); if (!r.ok) return; st = await r.json(); } catch (e) { return; }
+  const has = new Set([...Object.keys(S.days).filter(k => S.days[k] > 0), ...(st.days || [])]);
+  const prev = k => { const d = new Date(k + "T12:00:00"); d.setDate(d.getDate() - 1); return dayKey(d); };
+  const end = has.has(dayKey()) ? dayKey() : has.has(prev(dayKey())) ? prev(dayKey()) : null;
+  if (!end) return;
+  let n = 0; for (let k = end; has.has(k); k = prev(k)) n++;
+  if (S.streak.last === end && S.streak.count === n) return;
+  S.streak.last = end; S.streak.count = n; S.streak.best = Math.max(S.streak.best, n); save();
+  if (!P) render();
+}
 /* ---------- sound and celebration ---------- */
 let AC = null;
 function sound(kind) {
@@ -723,6 +746,7 @@ function finishSession() {
       status: l ? (isApproved(l) ? "Approved" : "Draft") : kind === "test" ? (passed ? "Passed" : "Not passed") : "Practice", date: today });
   }
   if (M) M.lessonDone(S);
+  shareDays();
   P = null;
   celebrate({ kind, title, pct, first, passed });
 }
@@ -762,7 +786,7 @@ load().then(loadLessons).then(() => {
   render();
   if (M) M.start(() => S, save, () => { if (!P) render(); });   // reminders come from the server; streak is shared with the PC
   else if (!D) { reminderTick(); setInterval(reminderTick, 30000); }
-  else D.onFocus(() => { if (!P && !$("video") && !$("#learn")) render(); });   // the day may have changed while hidden in the tray
+  else { shareDays(); phoneDays(); setInterval(() => { shareDays(); phoneDays(); }, 10 * 60 * 1000); D.onFocus(() => { phoneDays(); if (!P && !$("video") && !$("#learn")) render(); }); }   // the day may have changed while hidden in the tray
 });
 // expose for testing
 window.__sparky = { get S() { return S; }, get P() { return P; }, save, dayKey };
