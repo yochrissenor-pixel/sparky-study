@@ -196,7 +196,7 @@ window.LESSONS.push({
     "Every test you carry out"
    ],
    "answer": 0,
-   "why": "The slide says null the leads for continuity only.",
+   "why": "You null the leads for continuity only: those readings are fractions of an ohm, so the leads' own resistance matters. Insulation resistance is in megohms, so it makes no difference there.",
    "src": "99.pdf (EAL Initial Verification slides) p24",
    "explain": {
     "what": "Nulling matters where the readings are tiny, a fraction of an ohm.",

@@ -359,7 +359,7 @@ window.LESSONS.push({
     "Neutral to earth only"
    ],
    "answer": 0,
-   "why": "The slides say the pairs are the same as single-phase, just more of them.",
+   "why": "It's the same as single-phase, just more pairs: between all the live conductors and from each to earth. Testing one pair could miss a fault on another.",
    "src": "99.pdf (EAL Initial Verification slides) p81",
    "scene": "Three-phase circuit, insulation resistance test.",
    "explain": {

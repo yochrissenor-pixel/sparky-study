@@ -1,5 +1,6 @@
 // Sparky Study reminder service. Runs every 15 minutes in GitHub Actions (.github/workflows/reminders.yml).
-// 1. Reads new messages the phone app (and the PC app) posted to the private ntfy.sh topic: lessons done, reminder sign-ups, tests.
+// 1. Reads new messages the phone app (and the PC app) posted to the private ntfy.sh topic: lessons done, reminder sign-ups, tests,
+//    and progress changes ("ev"), which it files in state.json so a device that was away for over 12 hours can catch up.
 // 2. Keeps its memory in two places: private.json in the Actions cache (push keys, phone push addresses, what was sent today)
 //    and the public state.json on the "state" branch (days a lesson was done, the public push key), which the app reads.
 // 3. Sends a web push to each phone: at its reminder time if no lesson was done today, and a last warning at 21:30 if the streak is at risk.
@@ -13,6 +14,7 @@ const read = (f, d) => { try { return JSON.parse(fs.readFileSync(f, "utf8")); } 
 const S = Object.assign({ subs: {}, sent: {}, seen: [] }, read(PRIVATE_FILE, {}));
 const PUB = read(PUBLIC_FILE, {});
 S.days = [...new Set([...(PUB.days || []), ...(S.days || [])])];
+const EVENTS = Array.isArray(PUB.events) ? PUB.events : [], evIds = new Set(EVENTS.map(e => e.dev + ":" + e.seq));
 const before = JSON.stringify(S), pubBefore = JSON.stringify(PUB);
 
 // Push keys live only in the private cache. If the cache is ever lost, new keys are made and the app signs up again when next opened.
@@ -37,6 +39,10 @@ for (const m of msgs.sort((a, b) => a.time - b.time)) {
     if (x.tz) s.tz = String(x.tz).slice(0, 60);
     s.on = x.on !== false; s.updated = x.at;
     if (s.sub) S.subs[dev] = s;
+  }
+  else if (x.t === "ev" && Number.isInteger(x.seq) && x.seq > 0 && x.d && typeof x.d === "object" && m.message.length < 4096) {
+    if (!evIds.has(dev + ":" + x.seq)) { evIds.add(dev + ":" + x.seq); EVENTS.push({ dev, seq: x.seq, ver: String(x.ver || "").slice(0, 20), at: String(x.at || ""), d: x.d, log: x.log }); }
+    for (const [d, n] of Object.entries(x.d.days || {})) if (/^\d{4}-\d\d-\d\d$/.test(d) && n > 0 && !S.days.includes(d)) S.days.push(d);
   }
   else if (x.t === "off" && S.subs[dev]) S.subs[dev].on = false;
   else if (x.t === "test" && S.subs[dev]) S.subs[dev].test = true;
@@ -87,6 +93,7 @@ for (const dev of Object.keys(S.sent)) if (!S.subs[dev]) delete S.sent[dev];
 
 // public summary the app reads (no push addresses in it)
 const pub = { vapidPublic: S.vapid.publicKey, days: S.days, subs: Object.fromEntries(Object.entries(S.subs).map(([d, s]) => [d, { on: s.on, time: s.time }])) };
+if (EVENTS.length) pub.events = EVENTS.slice(-4000);   // progress changes from every device, oldest first
 const out = [];
 if (JSON.stringify(S) !== before) { fs.writeFileSync(PRIVATE_FILE, JSON.stringify(S)); out.push("private=1"); }
 if (JSON.stringify(pub) !== pubBefore) { fs.writeFileSync(PUBLIC_FILE, JSON.stringify(pub, null, 1) + "\n"); out.push("public=1"); }

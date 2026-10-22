@@ -87,7 +87,7 @@ window.LESSONS.push({
     "Isolated only on three-phase"
    ],
    "answer": 0,
-   "why": "Your slides say inspections must be done with the installation ISOLATED, even though it is already in use.",
+   "why": "Inspections must be done with the installation isolated, even though it is already in use, because you open up accessories and the board.",
    "src": "49.pdf (EAL Condition Reporting slides) p19",
    "explain": {
     "what": "The inspection part of an EICR means opening up accessories and the board to look inside.",
@@ -137,7 +137,7 @@ window.LESSONS.push({
      "Keeps fire alarms and emergency lighting going"
     ]
    ],
-   "why": "These are the course's four ways of keeping others safe while you test.",
+   "why": "These are the four ways of keeping others safe while you test.",
    "src": "99.pdf (EAL Initial Verification slides) p19",
    "explain": {
     "what": "'Safety of others' on your slides lists informing people, warning signs, barriers and temporary power or lighting.",
@@ -156,7 +156,7 @@ window.LESSONS.push({
     "Leave the circuit off the report"
    ],
    "answer": 0,
-   "why": "Your slides give 'not testing insulation resistance between live conductors due to current-using equipment' as an agreed limitation.",
+   "why": "'Not testing insulation resistance between live conductors due to current-using equipment' is an agreed limitation, because the test could damage sensitive equipment.",
    "src": "49.pdf (EAL Condition Reporting slides) p17; EICR form (IET BS 7671:2018+A4:2026) p5",
    "explain": {
     "what": "Insulation resistance testing can damage sensitive equipment, and you must never test with loads connected.",
@@ -182,7 +182,7 @@ window.LESSONS.push({
     "No code, it's a pass"
    ],
    "answer": 0,
-   "why": "Insulation resistance under 1 MΩ between live conductors and earth, measured at the board with all circuits connected, is C2 on your slides.",
+   "why": "Insulation resistance under 1 MΩ between live conductors and earth, measured at the board with all circuits connected, is C2.",
    "src": "49.pdf (EAL Condition Reporting slides) p43",
    "explain": {
     "what": "Low insulation resistance means current could be leaking to earth.",
@@ -219,7 +219,7 @@ window.LESSONS.push({
     "1.10",
     "1.096"
    ],
-   "why": "1.37 × 0.8 = 1.096, about 1.1 Ω: the same value your periodic slides use for a B32.",
+   "why": "1.37 × 0.8 = 1.096, about 1.1 Ω.",
    "src": "99.pdf (EAL Initial Verification slides) p135; 49.pdf (EAL Condition Reporting slides) p65-66; 33.pdf (BS 7671 18th Edition A2 course) p50; 33.pdf (BS 7671 18th Edition A2 course) p54",
    "explain": {
     "what": "Tabulated maximum Zs values are at the cable's working temperature (70 °C). When you test there is no load, so the cable is cooler and reads lower.",
@@ -239,7 +239,7 @@ window.LESSONS.push({
     "Too low: the breaker will trip early"
    ],
    "answer": 0,
-   "why": "1.24 Ω is over the 1.1 Ω corrected limit, and your slides code Zs too high for the device as C2.",
+   "why": "1.24 Ω is over the 1.1 Ω corrected limit, and Zs too high for the device to disconnect in time is C2.",
    "src": "49.pdf (EAL Condition Reporting slides) p41; 49.pdf (EAL Condition Reporting slides) p65",
    "explain": {
     "what": "Measured Zs must be below the corrected limit (tabulated × 0.8), not the tabulated value.",
@@ -257,7 +257,7 @@ window.LESSONS.push({
   },
   {
    "type": "fill",
-   "q": "Using the slide's method, the limit becomes 1.1 × 1.08 = ___ Ω",
+   "q": "Correct the limit for the hot room: 1.1 × 1.08 = ___ Ω",
    "answers": [
     "1.19",
     "1.188"
@@ -270,7 +270,7 @@ window.LESSONS.push({
     "how": "1.1 × 1.08 = 1.188, round to 1.19 Ω, then compare your measured Zs with that.",
     "where": "49.pdf slide p66"
    },
-   "scene": "The B32 circuit runs through a plant room at 30 °C. The slide's corrected limit at normal temperature is 1.1 Ω."
+   "scene": "The B32 circuit runs through a plant room at 30 °C. Its corrected limit at normal temperature is 1.1 Ω."
   },
   {
    "type": "choice",

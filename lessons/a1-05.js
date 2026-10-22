@@ -85,7 +85,7 @@ window.LESSONS.push({
     "There's no way to tell"
    ],
    "answer": 0,
-   "why": "302.pdf says TN-C-S is identified by the earth connection being made into the mains head.",
+   "why": "On TN-C-S (PME) the earth is taken off at the supply head (cut-out), because the supply uses one combined neutral and earth conductor (PEN).",
    "src": "302.pdf (Domestic Electrical Installer course) p34",
    "scene": "At the meter position, the earthing conductor runs from the main earthing terminal straight into a terminal on the supplier's cut-out.",
    "explain": {
@@ -117,7 +117,7 @@ window.LESSONS.push({
   },
   {
    "type": "match",
-   "q": "Match each earthing system to its maximum Ze on your course slides.",
+   "q": "Match each earthing system to its typical maximum Ze.",
    "pairs": [
     [
      "TN-C-S (PME)",
@@ -221,7 +221,7 @@ window.LESSONS.push({
     "Write 0.35 Ω on the form instead"
    ],
    "answer": 0,
-   "why": "0.28 Ω is under the 0.35 Ω the slides give for TN-C-S, so record the measured value.",
+   "why": "0.28 Ω is under the 0.35 Ω typical maximum for TN-C-S, so record the measured value.",
    "src": "99.pdf (EAL Initial Verification slides) p139; EIC form (IET BS 7671:2018+A4:2026) p3",
    "scene": "TN-C-S (PME) supply. With the earthing conductor disconnected from the MET, you measure Ze = 0.28 Ω.",
    "explain": {
@@ -247,7 +247,7 @@ window.LESSONS.push({
     "Your leads need nulling"
    ],
    "answer": 0,
-   "why": "The slides give 0.8 Ω as the maximum for TN-S, so 1.6 Ω needs looking into.",
+   "why": "The typical maximum for TN-S is 0.8 Ω, so 1.6 Ω needs looking into.",
    "src": "99.pdf (EAL Initial Verification slides) p139; 99.pdf (EAL Initial Verification slides) p85",
    "scene": "You identified the supply as TN-S. Ze measures 1.6 Ω.",
    "explain": {
@@ -282,7 +282,7 @@ window.LESSONS.push({
     "Type C circuit breaker"
    ],
    "answer": 0,
-   "why": "The slides say a TT main switch needs to be a 100 mA S-type RCD; S-type means time delay.",
+   "why": "On TT, Ze can be up to 200 Ω, so fault currents are small and the main switch needs to be a 100 mA S-type RCD. S-type means time delay.",
    "src": "99.pdf (EAL Initial Verification slides) p86",
    "explain": {
     "what": "On TT, Ze can be up to 200 Ω, so fault currents are small.",

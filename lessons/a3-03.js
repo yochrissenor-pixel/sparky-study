@@ -268,7 +268,7 @@ window.LESSONS.push({
   },
   {
    "type": "choice",
-   "q": "Which of these do your course slides give as a way to still get disconnection in time?",
+   "q": "What can you do so the circuit still disconnects in time?",
    "options": [
     "Protect the circuit with an RCD",
     "Fit a bigger breaker rating",
@@ -288,7 +288,7 @@ window.LESSONS.push({
   },
   {
    "type": "choice",
-   "q": "On an EICR, what code does your course give this?",
+   "q": "On an EICR, what code do you give this?",
    "options": [
     "C2",
     "C3",
@@ -296,7 +296,7 @@ window.LESSONS.push({
     "No code, just a note"
    ],
    "answer": 0,
-   "why": "Zs higher than needed to operate the device in the required time is a C2 on your slides.",
+   "why": "Zs too high for the device to operate in time is C2: a fault might not disconnect, so it's potentially dangerous.",
    "src": "49.pdf (EAL Condition Reporting slides) p41",
    "scene": "Periodic inspection. A circuit's Zs is too high for its breaker to disconnect in the required time.",
    "explain": {

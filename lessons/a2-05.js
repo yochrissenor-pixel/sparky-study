@@ -88,7 +88,7 @@ window.LESSONS.push({
     "Neutral to earth",
     "Line to neutral"
    ],
-   "why": "This is the test order on your slides.",
+   "why": "L and N linked to earth first tests both against earth in one go, then each on its own to earth, then between the two live conductors.",
    "src": "99.pdf (EAL Initial Verification slides) p126-127",
    "explain": {
     "what": "The course gives the same IR order for a lighting radial and a ring final.",

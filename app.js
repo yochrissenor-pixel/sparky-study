@@ -23,6 +23,15 @@ const dayDiff = (a, b) => Math.round((new Date(b + "T12:00:00") - new Date(a + "
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 // answers compare without spaces, case or a trailing unit (so "0.29", "0.29 Ω", "10.75V" and "2.25 m" all match)
 const norm = s => String(s).toLowerCase().replace(/\s+/g, "").replace(/(Ω|ω|ohms?|v|volts?|m|metres?|meters?)$/, "").replace(/^0+(?=\d)/, "");
+// Typed answers count as right if the text matches, the number matches (0.80 = .8 = 0.8 Ω), or both are lists of
+// conductor pairs in any order with either end first (L1-L2, L3-L1 ... = L2-L1, L1-L3 ...).
+const pairSet = s => {
+  const t = String(s).toLowerCase().replace(/[‐-―−–—]/g, "-"), re = /\b([lne]\d?)\s*-\s*([lne]\d?)\b/g, ps = new Set();
+  let m; while ((m = re.exec(t))) ps.add([m[1], m[2]].sort().join("-"));
+  return ps.size > 1 && !t.replace(re, "").replace(/\band\b|[\s,;&.]/g, "") ? [...ps].sort().join(" ") : null;
+};
+const numOf = s => { const t = String(s).toLowerCase().replace(/\s+/g, "").replace(/(Ω|ω|ohms?|kv?a|ma|a|v(dc)?|volts?|ms|mm2|mm²|m|metres?|meters?|years?)$/, ""); return /^\d*\.?\d+$/.test(t) ? parseFloat(t) : null; };
+const sameAnswer = (a, b) => norm(a) === norm(b) || (pairSet(a) !== null && pairSet(a) === pairSet(b)) || (numOf(a) !== null && numOf(a) === numOf(b));
 
 /* ---------- saved state ---------- */
 const blank = () => ({ streak: { count: 0, best: 0, last: null }, lessons: {}, topics: {}, days: {}, videos: {}, units: {}, mistakes: {}, approvals: {},
@@ -404,6 +413,7 @@ function viewSettings() {
       h("button", { class: "btn ghost", onclick: () => notify("Test reminder", "This is what a reminder looks like.") }, "Test")),
     D ? h("label", { style: "display:block;margin-top:8px" }, h("input", { type: "checkbox", checked: S.settings.autostart !== false, onchange: e => { S.settings.autostart = e.target.checked; save(); } }), " Start Sparky with Windows (needed for reminders after a restart)")
       : h("div", { class: "small muted", style: "margin-top:6px" }, "Notification permission: " + perm)));
+  v.append(syncCard());
   if (D) v.append(notionCard());
 
   const dates = S.settings.dates;
@@ -425,7 +435,7 @@ function viewSettings() {
     h("div", { class: "row", style: "margin-top:10px" },
       h("button", { class: "btn ghost", onclick: exportProgress }, "Export"),
       h("label", { class: "btn ghost" }, "Import", h("input", { type: "file", accept: ".json", hidden: true, onchange: importProgress })),
-      h("button", { class: "btn ghost", onclick: () => { if (confirm("Erase ALL progress and streak?")) { S = blank(); save(); render(); } } }, "Reset"))));
+      h("button", { class: "btn ghost", onclick: () => { if (confirm("Erase ALL progress and streak on this " + (M ? "phone" : "PC") + "?")) { const y = S.sync; S = blank(); if (y) { S.sync = y; y.mark = syncPart(S); } save(); render(); } } }, "Reset"))));
 
   const bad = PROBLEMS.length || LOAD_ERRORS.length;
   v.append(h("div", { class: "card" }, h("b", {}, "Lesson file check ", h("span", { class: "tag " + (bad ? "bad" : "ok") }, bad ? "PROBLEMS" : "ALL OK")),
@@ -442,7 +452,7 @@ function exportProgress() {
 }
 function importProgress(e) {
   const f = e.target.files[0]; if (!f) return;
-  f.text().then(t => { try { const o = JSON.parse(t); if (!o.streak || !o.lessons) throw 0; S = Object.assign(blank(), o); save(); render(); alert("Progress imported."); } catch (x) { alert("That file isn't a Sparky progress export."); } });
+  f.text().then(t => { try { const o = JSON.parse(t); if (!o.streak || !o.lessons) throw 0; const y = S.sync; S = Object.assign(blank(), o); if (y) { S.sync = y; y.mark = syncPart(S); } else delete S.sync; save(); render(); alert("Progress imported."); } catch (x) { alert("That file isn't a Sparky progress export."); } });
 }
 
 /* ---------- reminders ---------- */
@@ -498,6 +508,152 @@ async function phoneDays() {
   if (S.streak.last === end && S.streak.count === n) return;
   S.streak.last = end; S.streak.count = n; S.streak.best = Math.max(S.streak.best, n); save();
   if (!P) render();
+}
+/* ---------- progress sync between PC and iPhone ---------- */
+// Each device posts what changed since its last post to the same private relay. The reminder service (phone/reminders)
+// also files these changes in state.json, so a device that was away for more than 12 hours still catches up.
+// Counts add up, best scores and dates take the later/higher one, so a lesson done on either device counts on both.
+const SYNC_KEYS = ["lessons", "units", "topics", "days", "mistakes", "approvals", "videos"];
+let SYNCING = false, SYNC_LOG = null;
+function syncPart(s) {   // the parts of progress that sync (video positions stay where they were watched)
+  const o = {};
+  for (const k of SYNC_KEYS) o[k] = JSON.parse(JSON.stringify(s[k] || {}));
+  for (const id of Object.keys(o.videos)) { if (o.videos[id] && o.videos[id].watched) o.videos[id] = { watched: o.videos[id].watched }; else delete o.videos[id]; }
+  return o;
+}
+function syncSetup() {
+  const y = S.sync = S.sync || {};
+  if (!y.dev) y.dev = (D ? "pc-" : M ? "phone-" : "web-") + Math.random().toString(36).slice(2, 8);
+  if (!y.mark) y.mark = syncPart(blank());   // a new device shares everything it already has
+  if (!y.since) y.since = new Date().toISOString();
+  y.seq = y.seq || 0; y.seen = y.seen || []; y.out = y.out || []; y.peers = y.peers || {};
+  return y;
+}
+// what changed from a to b (both from syncPart)
+function syncDiff(a, b) {
+  const d = {}, put = (k, id, x) => { if (Object.keys(x).length) (d[k] = d[k] || {})[id] = x; };
+  const n = v => v || 0;
+  for (const k of ["lessons", "units"]) for (const [id, r] of Object.entries(b[k])) {
+    const o = a[k][id] || {}, x = {};
+    if (r.done && !o.done) x.done = true;
+    if (r.passed && !o.passed) x.passed = r.passed;
+    if (n(r.attempts) > n(o.attempts)) x.attempts = r.attempts - n(o.attempts);
+    if (n(r.best) > n(o.best)) x.best = r.best;
+    if (r.last && r.last !== o.last) x.last = r.last;
+    put(k, id, x);
+  }
+  for (const [id, r] of Object.entries(b.topics)) {
+    const o = a.topics[id] || {}, x = {};
+    if (n(r.right) > n(o.right)) x.right = r.right - n(o.right);
+    if (n(r.total) > n(o.total)) x.total = r.total - n(o.total);
+    put("topics", id, x);
+  }
+  for (const [day, c] of Object.entries(b.days)) if (n(c) > n(a.days[day])) (d.days = d.days || {})[day] = c - n(a.days[day]);
+  for (const id of new Set([...Object.keys(a.mistakes), ...Object.keys(b.mistakes)]))
+    if (a.mistakes[id] !== b.mistakes[id]) (d.mistakes = d.mistakes || {})[id] = b.mistakes[id] || null;   // null = got it right since
+  for (const k of ["approvals", "videos"]) for (const [id, r] of Object.entries(b[k])) if (!a[k][id]) (d[k] = d[k] || {})[id] = r;
+  return d;
+}
+function syncApply(s, d) {
+  const n = v => v || 0;
+  for (const k of ["lessons", "units"]) for (const [id, x] of Object.entries(d[k] || {})) {
+    const r = s[k][id] = s[k][id] || { attempts: 0, best: 0 };
+    if (x.done) r.done = true;
+    if (x.passed && (!r.passed || x.passed < r.passed)) r.passed = x.passed;
+    if (x.attempts > 0) r.attempts = n(r.attempts) + x.attempts;
+    if (x.best > n(r.best)) r.best = x.best;
+    if (x.last && (!r.last || x.last > r.last)) r.last = x.last;
+  }
+  for (const [id, x] of Object.entries(d.topics || {})) { const t = s.topics[id] = s.topics[id] || { right: 0, total: 0 }; t.right += n(x.right); t.total += n(x.total); }
+  for (const [day, c] of Object.entries(d.days || {})) if (/^\d{4}-\d\d-\d\d$/.test(day) && c > 0) s.days[day] = n(s.days[day]) + c;
+  for (const [id, v] of Object.entries(d.mistakes || {})) { if (v) s.mistakes[id] = v; else delete s.mistakes[id]; }
+  for (const [id, v] of Object.entries(d.approvals || {})) if (!s.approvals[id]) s.approvals[id] = v;
+  for (const [id, v] of Object.entries(d.videos || {})) { const r = s.videos[id] = s.videos[id] || {}; if (!r.watched && v.watched) r.watched = v.watched; }
+}
+// One relay message holds about 4 KB, so a big first share is sent in several parts.
+function syncChunks(d) {
+  const out = []; let cur = {}, size = 0;
+  for (const k of SYNC_KEYS) for (const [id, v] of Object.entries(d[k] || {})) {
+    const len = JSON.stringify(id).length + JSON.stringify(v).length + 4;
+    if (size && size + len > 2800) { out.push(cur); cur = {}; size = 0; }
+    (cur[k] = cur[k] || {})[id] = v; size += len;
+  }
+  if (size) out.push(cur);
+  return out;
+}
+// Note what changed here since the last share and queue it to send.
+function syncPush() {
+  const y = syncSetup(), now = syncPart(S), parts = syncChunks(syncDiff(y.mark, now));
+  if (!parts.length) { y.mark = now; return false; }
+  parts.forEach((d, i) => y.out.push({ t: "ev", dev: y.dev, seq: ++y.seq, ver: VERSION, at: new Date().toISOString(), d,
+    log: i === parts.length - 1 && SYNC_LOG ? SYNC_LOG : undefined }));
+  SYNC_LOG = null; y.mark = now; y.out = y.out.slice(-200); save();
+  return true;
+}
+async function syncFlush() {
+  const y = syncSetup();
+  while (y.out.length) {
+    let ok = false;
+    try { ok = (await fetch(RELAY, { method: "POST", body: JSON.stringify(y.out[0]) })).ok; } catch (e) { /* offline */ }
+    if (!ok) break;
+    y.out.shift(); y.lastSent = new Date().toISOString(); save();
+  }
+}
+async function syncPull() {
+  const y = syncSetup(), evs = [];
+  let reached = false;
+  try { const r = await fetch(SHARED + "?t=" + Date.now(), { cache: "no-store" }); if (r.ok) { reached = true; evs.push(...((await r.json()).events || [])); } } catch (e) { /* offline */ }
+  try {
+    const r = await fetch(RELAY + "/json?poll=1&since=12h");
+    if (r.ok) { reached = true; for (const line of (await r.text()).split("\n")) { try { const m = JSON.parse(line); if (m.event !== "message") continue; const x = JSON.parse(m.message); if (x.t === "ev") evs.push(x); } catch (e) { /* not ours */ } } }
+  } catch (e) { /* offline */ }
+  if (reached) y.lastPull = new Date().toISOString();
+  const seen = new Set(y.seen); let changed = false;
+  for (const x of evs.sort((a, b) => String(a.at).localeCompare(String(b.at)) || a.seq - b.seq)) {
+    if (!x || typeof x.dev !== "string" || !(x.seq > 0) || !x.d || typeof x.d !== "object") continue;
+    const id = x.dev + ":" + x.seq;
+    if (x.dev === y.dev || seen.has(id)) continue;
+    seen.add(id); changed = true;
+    syncApply(S, x.d); syncApply(y.mark, x.d);   // already here, so it isn't shared back
+    y.peers[x.dev] = { ver: x.ver, at: x.at };
+    if (D && x.log && x.at > y.since) D.logLesson(Object.assign({}, x.log, { streak: S.streak.count, title: x.log.title + " (" + (x.dev.startsWith("phone-") ? "iPhone" : "other device") + ")" }));
+  }
+  y.seen = [...seen].slice(-5000);
+  if (changed) streakFromDays();
+  save();
+  return changed;
+}
+// One streak for every device: count back from today (or yesterday) over the days a lesson was done.
+function streakFromDays() {
+  const has = new Set(Object.keys(S.days).filter(k => S.days[k] > 0));
+  const prev = k => { const d = new Date(k + "T12:00:00"); d.setDate(d.getDate() - 1); return dayKey(d); };
+  const end = has.has(dayKey()) ? dayKey() : has.has(prev(dayKey())) ? prev(dayKey()) : null;
+  if (!end) return;
+  let n = 0; for (let k = end; has.has(k); k = prev(k)) n++;
+  if (end > (S.streak.last || "") || (S.streak.last === end && n > S.streak.count)) { S.streak.last = end; S.streak.count = n; }
+  S.streak.best = Math.max(S.streak.best, S.streak.count);
+}
+const vcmp = (a, b) => { const x = String(a).split(".").map(Number), y = String(b).split(".").map(Number); for (let i = 0; i < 3; i++) if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) - (y[i] || 0); return 0; };
+async function syncNow() {
+  if (SYNCING || !S) return; SYNCING = true;
+  try { syncPush(); await syncFlush(); if (await syncPull() && !P && !$("video") && !$("#learn")) render(); }
+  finally { SYNCING = false; }
+}
+function syncCard() {
+  const y = syncSetup(), here = M ? "iPhone" : D ? "PC" : "browser";
+  const name = dev => dev.startsWith("pc-") ? "PC" : dev.startsWith("phone-") ? "iPhone" : "Browser";
+  const ago = t => { if (!t) return "never"; const m = Math.round((Date.now() - new Date(t)) / 60000); return m < 1 ? "just now" : m < 60 ? m + " min ago" : m < 1440 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " days ago"; };
+  const peers = Object.entries(y.peers).sort((a, b) => String(b[1].at).localeCompare(String(a[1].at)));
+  const status = h("div", { class: "small", style: "margin-top:6px" });
+  return h("div", { class: "card" }, h("b", {}, "Sync with your " + (M ? "PC" : "iPhone")),
+    h("div", { class: "muted small" }, `Lessons, scores, mistakes, approvals and your streak are shared between your PC and iPhone. A lesson done on one shows on the other within a few minutes (needs the internet; if you're offline it waits and sends later).`),
+    h("ul", { class: "small", style: "margin:8px 0 0 18px;padding:0" },
+      h("li", {}, `This ${here}: v${VERSION}` + (y.out.length ? ` · ${y.out.length} change(s) waiting to send` : " · all sent") + ` · last checked ${ago(y.lastPull)}`),
+      peers.length ? peers.map(([dev, p]) => h("li", {}, `${name(dev)}: v${p.ver || "?"} · last change ${ago(p.at)}`,
+        p.ver && p.ver !== "browser" && VERSION !== "browser" && p.ver !== VERSION ? h("span", { class: "tag unc", style: "margin-left:6px" }, vcmp(p.ver, VERSION) > 0 ? "NEWER THAN THIS ONE" : "OLDER: UPDATE IT") : null))
+        : h("li", { class: "muted" }, `Nothing from your ${M ? "PC" : "iPhone"} yet. Open Sparky there (v2.2.0 or newer) and it will join in.`)),
+    h("button", { class: "btn ghost", style: "margin-top:8px", onclick: async () => { status.textContent = "Syncing…"; await syncNow(); viewSettings(); } }, "Sync now"),
+    status);
 }
 /* ---------- sound and celebration ---------- */
 let AC = null;
@@ -674,7 +830,7 @@ function qFill(q, key) {
   const [a, b] = q.q.split("___");
   const input = h("input", { type: "text", autocomplete: "off", spellcheck: "false" });
   const check = h("button", { class: "btn", disabled: true, onclick: () => {
-    const ok = q.answers.some(x => norm(x) === norm(input.value));
+    const ok = q.answers.some(x => sameAnswer(x, input.value));
     input.readOnly = true; input.classList.add(ok ? "right" : "wrong"); check.remove();
     if (!ok) input.value = input.value + "  →  " + q.answers[0];
     feedback(q, key, ok);
@@ -739,14 +895,14 @@ function finishSession() {
   const first = S.streak.last !== today;
   if (first) { S.streak.count = effectiveStreak() + 1; S.streak.last = today; S.streak.best = Math.max(S.streak.best, S.streak.count); }
   save();
-  if (D) {
-    const l = P.meta.l;
-    D.logLesson({ id: l ? l.id : kind, title: kind === "lesson" ? title : (kind === "test" ? "Unit test: " : "Practice: ") + (kind === "test" ? P.meta.u.title : title),
-      topic: l ? topicNotion(l.topic) : kind === "test" ? "Unit test" : "Practice", score: pct, questions: P.total, streak: S.streak.count,
-      status: l ? (isApproved(l) ? "Approved" : "Draft") : kind === "test" ? (passed ? "Passed" : "Not passed") : "Practice", date: today });
-  }
+  const l = P.meta.l, log = { id: l ? l.id : kind, title: kind === "lesson" ? title : (kind === "test" ? "Unit test: " : "Practice: ") + (kind === "test" ? P.meta.u.title : title),
+    topic: l ? topicNotion(l.topic) : kind === "test" ? "Unit test" : "Practice", score: pct, questions: P.total, streak: S.streak.count,
+    status: l ? (isApproved(l) ? "Approved" : "Draft") : kind === "test" ? (passed ? "Passed" : "Not passed") : "Practice", date: today };
+  if (D) D.logLesson(log);
+  else SYNC_LOG = log;   // the PC adds lessons done on the phone to the Notion log
   if (M) M.lessonDone(S);
   shareDays();
+  syncNow();
   P = null;
   celebrate({ kind, title, pct, first, passed });
 }
@@ -784,9 +940,11 @@ const ver = h("span", { class: "ver" }); $(".brand").append(ver);
 Promise.resolve(D && D.version ? D.version() : M ? M.version : "browser").then(v => { VERSION = v; ver.textContent = v === "browser" ? "" : "v" + v; });
 load().then(loadLessons).then(() => {
   render();
+  syncNow(); setInterval(syncNow, 3 * 60 * 1000);   // progress is shared between the PC and the iPhone
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") syncNow(); });
   if (M) M.start(() => S, save, () => { if (!P) render(); });   // reminders come from the server; streak is shared with the PC
   else if (!D) { reminderTick(); setInterval(reminderTick, 30000); }
-  else { shareDays(); phoneDays(); setInterval(() => { shareDays(); phoneDays(); }, 10 * 60 * 1000); D.onFocus(() => { phoneDays(); if (!P && !$("video") && !$("#learn")) render(); }); }   // the day may have changed while hidden in the tray
+  else { shareDays(); phoneDays(); setInterval(() => { shareDays(); phoneDays(); }, 10 * 60 * 1000); D.onFocus(() => { phoneDays(); syncNow(); if (!P && !$("video") && !$("#learn")) render(); }); }   // the day may have changed while hidden in the tray
 });
 // expose for testing
 window.__sparky = { get S() { return S; }, get P() { return P; }, save, dayKey };
