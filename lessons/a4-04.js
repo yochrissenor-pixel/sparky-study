@@ -268,7 +268,7 @@ window.LESSONS.push({
     "500 V DC",
     "500VDC"
    ],
-   "why": "Insulation resistance on a 230 V circuit is tested at 500 V DC on your course slides.",
+   "why": "Insulation resistance on a 230 V circuit is tested at 500 V DC.",
    "src": "99.pdf (EAL Initial Verification slides) p156; EIC form (IET BS 7671:2018+A4:2026) p5",
    "explain": {
     "what": "Column 23 is the voltage your tester applied for the insulation resistance test.",

@@ -125,7 +125,7 @@ window.LESSONS.push({
     "0.4",
     "0.40"
    ],
-   "why": "1.6 ÷ 4 = 0.4 Ω. The slide text says '4Ω': that's a misprint.",
+   "why": "(r1 + rn) ÷ 4 = 1.6 ÷ 4 = 0.4 Ω.",
    "src": "99.pdf (EAL Initial Verification slides) p114",
    "explain": {
     "what": "This is the course's own theory example: open loop r1 = rn = 0.8 Ω.",
@@ -133,7 +133,7 @@ window.LESSONS.push({
     "how": "Sense-check every answer: the step 2 value must be smaller than r1 on its own.",
     "where": "Course slides 99.pdf p114 (ring theory, misprinted as 4 Ω)"
    },
-   "scene": "Course theory slide: open loop r1 = 0.8 Ω and rn = 0.8 Ω."
+   "scene": "Step 1 (end to end): r1 = 0.8 Ω and rn = 0.8 Ω."
   },
   {
    "type": "choice",
@@ -149,11 +149,11 @@ window.LESSONS.push({
    "src": "99.pdf (EAL Initial Verification slides) p115",
    "explain": {
     "what": "Same theory, now for step 3 with the CPC.",
-    "why": "r2 = 0.8 × 1.67 ≈ 1.33 Ω. (0.8 + 1.33) ÷ 4 = 2.13 ÷ 4 = 0.53 Ω. The slide text shows 13.3 and 5.3, which are misprints for 1.33 and 0.53.",
+    "why": "r2 = 0.8 × 1.67 ≈ 1.33 Ω. (0.8 + 1.33) ÷ 4 = 2.13 ÷ 4 = 0.53 Ω.",
     "how": "Work out r2 with the 1.67 ratio, add it to r1, divide by 4.",
     "where": "Course slides 99.pdf p115 (ring theory, misprinted as 13.3 and 5.3)"
    },
-   "scene": "Course theory slide: open loop r1 = 0.8 Ω and r2 = 1.33 Ω (2.5/1.5 twin and earth)."
+   "scene": "Step 1 (end to end): r1 = 0.8 Ω and r2 = 1.33 Ω (2.5/1.5 twin and earth)."
   },
   {
    "type": "fill",
@@ -163,7 +163,7 @@ window.LESSONS.push({
     "0.145",
     "0.15"
    ],
-   "why": "0.58 ÷ 4 = 0.145, shown on the slide as 0.14 Ω.",
+   "why": "0.58 ÷ 4 = 0.145, about 0.14 Ω.",
    "src": "99.pdf (EAL Initial Verification slides) p122",
    "explain": {
     "what": "This is the course's 40 m worked example: r1 = rn = 0.29 Ω, r2 = 0.48 Ω.",
@@ -171,7 +171,7 @@ window.LESSONS.push({
     "how": "Do this sum before you walk round with your step 2 links in.",
     "where": "Course worked example (course slides 99.pdf p122)"
    },
-   "scene": "Course worked example, 40 m ring: r1 = rn = 0.29 Ω, r2 = 0.48 Ω."
+   "scene": "Worked example, 40 m ring: r1 = rn = 0.29 Ω, r2 = 0.48 Ω."
   },
   {
    "type": "fill",
@@ -275,7 +275,7 @@ window.LESSONS.push({
   },
   {
    "type": "choice",
-   "q": "Which two things does the course say to suspect?",
+   "q": "What are the two most likely causes?",
    "options": [
     "A spur or an interconnection",
     "A tripped RCD or a low Ze",

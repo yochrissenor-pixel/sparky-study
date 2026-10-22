@@ -101,7 +101,7 @@ window.LESSONS.push({
   },
   {
    "type": "match",
-   "q": "Match the RCD rating to its job on your slides.",
+   "q": "Match the RCD rating to its job.",
    "pairs": [
     [
      "30 mA",
@@ -158,7 +158,7 @@ window.LESSONS.push({
     "Fail: it must trip in under 10 ms"
    ],
    "answer": 0,
-   "why": "At 1 × IΔn the slides give a limit of under 300 ms.",
+   "why": "At 1 × IΔn the RCD must trip in under 300 ms.",
    "src": "99.pdf (EAL Initial Verification slides) p147",
    "scene": "30 mA RCD. At IΔn it trips in 350 ms.",
    "explain": {
@@ -178,9 +178,9 @@ window.LESSONS.push({
     "Ignore it, only IΔn counts"
    ],
    "answer": 0,
-   "why": "On your slides, at ½ × IΔn the RCD must not trip.",
+   "why": "At ½ × IΔn the RCD must not trip. One that trips at 15 mA is too sensitive and would nuisance-trip in normal use.",
    "src": "99.pdf (EAL Initial Verification slides) p147",
-   "scene": "30 mA RCD. Your slides' half-rated test: at 15 mA it trips.",
+   "scene": "30 mA RCD. You do the half-rated test (15 mA) and it trips.",
    "explain": {
     "what": "The half-rated test checks the RCD isn't over-sensitive.",
     "why": "An RCD that trips at 15 mA would nuisance-trip in normal use. The A4 form doesn't have a box for this test, but your slides include it.",
@@ -190,7 +190,7 @@ window.LESSONS.push({
   },
   {
    "type": "choice",
-   "q": "Pass or fail on your slides?",
+   "q": "Pass or fail?",
    "options": [
     "Fail: at 5 × IΔn it must be under 40 ms",
     "Pass: it's well under the 300 ms limit",
@@ -198,7 +198,7 @@ window.LESSONS.push({
     "Fail: it must be under 10 ms"
    ],
    "answer": 0,
-   "why": "The slides give under 40 ms at 5 × IΔn (150 mA).",
+   "why": "At 5 × IΔn (150 mA) it must trip in under 40 ms, so 52 ms is too slow.",
    "src": "99.pdf (EAL Initial Verification slides) p147",
    "scene": "30 mA RCD. At 5 × IΔn (150 mA) it trips in 52 ms.",
    "explain": {
@@ -294,7 +294,7 @@ window.LESSONS.push({
   },
   {
    "type": "choice",
-   "q": "On an EICR, what code does your course give this?",
+   "q": "On an EICR, what code do you give this?",
    "options": [
     "C2",
     "C3",
