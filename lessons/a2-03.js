@@ -101,7 +101,7 @@ window.LESSONS.push({
   },
   {
    "type": "choice",
-   "q": "On the ring slides, what does L2 mean?",
+   "q": "In a ring final test, what does L2 mean?",
    "options": [
     "The returning line conductor",
     "Line 2 of a three-phase supply",
@@ -269,7 +269,7 @@ window.LESSONS.push({
     "how": "mΩ/m × length ÷ 1000 = ohms.",
     "where": "Course worked example (course slides 99.pdf p117-119)"
    },
-   "scene": "Course worked example: a 40 m ring in 2.5/1.5 mm² twin and earth."
+   "scene": "Worked example: a 40 m ring in 2.5/1.5 mm² twin and earth."
   },
   {
    "type": "fill",

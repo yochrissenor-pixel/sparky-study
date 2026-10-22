@@ -252,7 +252,7 @@ window.LESSONS.push({
     "Column 31 Remarks only"
    ],
    "answer": 1,
-   "why": "Your course says installed equipment that isn't of the right type or standard is recorded as a departure (deviation) on the EIC.",
+   "why": "Installed equipment that isn't of the right type or standard is recorded as a departure (deviation) on the EIC.",
    "src": "99.pdf (EAL Initial Verification slides) p45; EIC form (IET BS 7671:2018+A4:2026) p2",
    "explain": {
     "what": "Each Section C block has a 'Details of departures from BS 7671' box for anything in the work that doesn't follow the rules.",
@@ -275,7 +275,7 @@ window.LESSONS.push({
     "5",
     "five"
    ],
-   "why": "The course list of test intervals gives 5 years for rented housing.",
+   "why": "Rented housing is inspected every 5 years (private housing would be 10).",
    "src": "99.pdf (EAL Initial Verification slides) p36; 99.pdf (EAL Initial Verification slides) p38; EIC form (IET BS 7671:2018+A4:2026) p2",
    "explain": {
     "what": "Section D is the designer's recommendation for when the first periodic inspection should be done.",

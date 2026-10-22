@@ -144,7 +144,7 @@ window.LESSONS.push({
     "FI"
    ],
    "answer": 0,
-   "why": "A borrowed neutral (one circuit's neutral shared by another separately protected circuit) is C2 on your slides.",
+   "why": "A borrowed neutral (one circuit's neutral shared by another separately protected circuit) is C2: isolating one circuit's breaker doesn't fully isolate the other circuit.",
    "src": "49.pdf (EAL Condition Reporting slides) p42",
    "explain": {
     "what": "A borrowed neutral means isolating one circuit's breaker doesn't fully isolate the other circuit's conductors.",
@@ -164,7 +164,7 @@ window.LESSONS.push({
     "No code, it is a ring"
    ],
    "answer": 0,
-   "why": "A ring final with a discontinuous conductor is C2 on your slides.",
+   "why": "A ring final with a discontinuous conductor is C2.",
    "src": "49.pdf (EAL Condition Reporting slides) p41-42",
    "explain": {
     "what": "In a ring, both ends of each conductor go back to the board. With one break the circuit still works, so the fault is hidden.",
@@ -224,7 +224,7 @@ window.LESSONS.push({
     "FI"
    ],
    "answer": 0,
-   "why": "A bare protective conductor not sleeved in the right colour is C3 on your slides.",
+   "why": "A bare protective conductor not sleeved in the right colour is C3.",
    "src": "49.pdf (EAL Condition Reporting slides) p50",
    "explain": {
     "what": "Bare CPCs in twin and earth should be sleeved green-and-yellow where they are exposed in accessories.",

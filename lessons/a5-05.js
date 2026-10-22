@@ -197,7 +197,7 @@ window.LESSONS.push({
     "Item 5.12, FI"
    ],
    "answer": 0,
-   "why": "Item 3.6 is 'Confirmation of main protective bonding conductor sizes'; under 6 mm² is C2 on your course slides.",
+   "why": "Item 3.6 is 'Confirmation of main protective bonding conductor sizes'; under 6 mm² is C2.",
    "src": "49.pdf (EAL Condition Reporting slides) p38",
    "explain": {
     "what": "Section 3.0 covers earthing and bonding arrangements.",
@@ -275,7 +275,7 @@ window.LESSONS.push({
     "✓"
    ],
    "answer": 1,
-   "why": "Crumbling insulation not accessible with the cover on is C2 on your course slides.",
+   "why": "Crumbling insulation not accessible with the cover on is C2.",
    "src": "49.pdf (EAL Condition Reporting slides) p60",
    "explain": {
     "what": "This falls under item 5.3, 'Condition of insulation of live parts'.",
@@ -341,7 +341,7 @@ window.LESSONS.push({
     "LIM"
    ],
    "answer": 2,
-   "why": "No RCD on a socket unlikely to supply outdoor equipment, not in a bathroom, is C3 on your slides.",
+   "why": "No RCD on a socket unlikely to supply outdoor equipment, not in a bathroom, is C3.",
    "src": "49.pdf (EAL Condition Reporting slides) p47",
    "explain": {
     "what": "Item 5.12 covers additional protection by an RCD not exceeding 30 mA, including socket-outlets up to 32 A.",

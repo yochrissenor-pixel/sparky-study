@@ -68,7 +68,7 @@ window.LESSONS.push({
     "Circuits on, bonding conductors removed"
    ],
    "answer": 0,
-   "why": "The slide says isolate the circuits, but you need supply to the board to test.",
+   "why": "With the circuits isolated, nothing relies on the earth you're about to remove, but the board still needs its incoming supply for the tester.",
    "src": "99.pdf (EAL Initial Verification slides) p138",
    "scene": "Assessment board, single-phase, TN-C-S. You're about to measure Ze.",
    "explain": {
@@ -118,7 +118,7 @@ window.LESSONS.push({
   },
   {
    "type": "match",
-   "q": "Match the earthing system to the typical maximum Ze on your slides.",
+   "q": "Match the earthing system to its typical maximum Ze.",
    "pairs": [
     [
      "TN-C-S (PME)",
@@ -295,7 +295,7 @@ window.LESSONS.push({
     "Press the RCD test button"
    ],
    "answer": 0,
-   "why": "The slide says switch off supply before disconnecting the earth conductor; on the board that means main switch off.",
+   "why": "Switch off the supply before you disconnect the earthing conductor, so nothing is in use without an earth. On the board that means main switch off.",
    "src": "99.pdf (EAL Initial Verification slides) p137",
    "scene": "TT board with an earth rod. You use the loop tester to test the electrode (method E3).",
    "explain": {
@@ -307,7 +307,7 @@ window.LESSONS.push({
   },
   {
    "type": "choice",
-   "q": "What code does your course give this?",
+   "q": "What code do you give this?",
    "options": [
     "C2",
     "C1",
@@ -315,7 +315,7 @@ window.LESSONS.push({
     "FI"
    ],
    "answer": 0,
-   "why": "A water, gas or oil pipe used as the means of earthing is a C2 on your slides.",
+   "why": "A water, gas or oil pipe used as the means of earthing is C2, potentially dangerous. It isn't C1 because nothing is live to touch right now.",
    "src": "49.pdf (EAL Condition Reporting slides) p37",
    "scene": "Periodic inspection. When you go to disconnect for Ze, you find the only earth is a clamp onto the incoming water pipe.",
    "explain": {

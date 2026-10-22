@@ -23,6 +23,15 @@ const dayDiff = (a, b) => Math.round((new Date(b + "T12:00:00") - new Date(a + "
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 // answers compare without spaces, case or a trailing unit (so "0.29", "0.29 Ω", "10.75V" and "2.25 m" all match)
 const norm = s => String(s).toLowerCase().replace(/\s+/g, "").replace(/(Ω|ω|ohms?|v|volts?|m|metres?|meters?)$/, "").replace(/^0+(?=\d)/, "");
+// Typed answers count as right if the text matches, the number matches (0.80 = .8 = 0.8 Ω), or both are lists of
+// conductor pairs in any order with either end first (L1-L2, L3-L1 ... = L2-L1, L1-L3 ...).
+const pairSet = s => {
+  const t = String(s).toLowerCase().replace(/[‐-―−–—]/g, "-"), re = /\b([lne]\d?)\s*-\s*([lne]\d?)\b/g, ps = new Set();
+  let m; while ((m = re.exec(t))) ps.add([m[1], m[2]].sort().join("-"));
+  return ps.size > 1 && !t.replace(re, "").replace(/\band\b|[\s,;&.]/g, "") ? [...ps].sort().join(" ") : null;
+};
+const numOf = s => { const t = String(s).toLowerCase().replace(/\s+/g, "").replace(/(Ω|ω|ohms?|kv?a|ma|a|v(dc)?|volts?|ms|mm2|mm²|m|metres?|meters?|years?)$/, ""); return /^\d*\.?\d+$/.test(t) ? parseFloat(t) : null; };
+const sameAnswer = (a, b) => norm(a) === norm(b) || (pairSet(a) !== null && pairSet(a) === pairSet(b)) || (numOf(a) !== null && numOf(a) === numOf(b));
 
 /* ---------- saved state ---------- */
 const blank = () => ({ streak: { count: 0, best: 0, last: null }, lessons: {}, topics: {}, days: {}, videos: {}, units: {}, mistakes: {}, approvals: {},
@@ -674,7 +683,7 @@ function qFill(q, key) {
   const [a, b] = q.q.split("___");
   const input = h("input", { type: "text", autocomplete: "off", spellcheck: "false" });
   const check = h("button", { class: "btn", disabled: true, onclick: () => {
-    const ok = q.answers.some(x => norm(x) === norm(input.value));
+    const ok = q.answers.some(x => sameAnswer(x, input.value));
     input.readOnly = true; input.classList.add(ok ? "right" : "wrong"); check.remove();
     if (!ok) input.value = input.value + "  →  " + q.answers[0];
     feedback(q, key, ok);

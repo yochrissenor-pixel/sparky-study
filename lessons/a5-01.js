@@ -149,7 +149,7 @@ window.LESSONS.push({
     "Sampling gives more accurate readings"
    ],
    "answer": 0,
-   "why": "Your slides say 100% inspection and testing in many installations is unrealistic, uneconomical and unachievable.",
+   "why": "100% inspection and testing in many installations is unrealistic, uneconomical and unachievable, so you inspect and test a sensible sample.",
    "src": "49.pdf (EAL Condition Reporting slides) p7",
    "explain": {
     "what": "Sampling means inspecting and testing a sensible proportion of items rather than every single one.",
@@ -285,7 +285,7 @@ window.LESSONS.push({
     "It sets the date of the next inspection"
    ],
    "answer": 0,
-   "why": "Your slides warn you could be held responsible for parts of the installation you have not inspected and tested.",
+   "why": "If limitations aren't written down, you could be held responsible for parts of the installation you have not inspected and tested.",
    "src": "49.pdf (EAL Condition Reporting slides) p16",
    "explain": {
     "what": "The extent is the list of what you are reporting on.",
